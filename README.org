@@ -4,6 +4,8 @@
 
 * インストール方法
 
+  Ruby 2.7で利用してください。それ以前のバージョンでは起動しません。
+
   #+BEGIN_SRC sh
 mkdir -p ~/.mikutter/plugin && git clone https://github.com/toshia/covid19.git ~/.mikutter/plugin/covid19
   #+END_SRC
