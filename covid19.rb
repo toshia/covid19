@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'model/contacts'
+require_relative 'model/patient'
 require_relative 'model/user'
 
 Plugin.create(:covid19) do
@@ -10,6 +11,7 @@ Plugin.create(:covid19) do
     [{
        **dss,
        covid19_contacts: '新型コロナコールセンター相談件数',
+       covid19_patients: '罹患者',
      }]
   end
 
@@ -21,8 +23,11 @@ Plugin.create(:covid19) do
       res = http.request(Net::HTTP::Get.new(@url.path))
       case res
       when Net::HTTPSuccess     # 2xx
-        contacts = JSON.parse(res.body, symbolize_names: true).dig(:contacts, :data)
+        data = JSON.parse(res.body, symbolize_names: true)
+        contacts = data.dig(:contacts, :data)
         Plugin.call(:extract_receive_message, :covid19_contacts, contacts.map{|c| Plugin::Covid19::Contact.new(c) })
+        patients = data.dig(:patients, :data)
+        Plugin.call(:extract_receive_message, :covid19_patients, patients.map.with_index{|c, i| Plugin::Covid19::Patient.new({**c, number: i + 1}) })
       else
         post_apocalypse
       end

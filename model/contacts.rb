@@ -28,7 +28,7 @@ module Plugin::Covid19
     end
 
     def path
-      '/contact/%{year}/%{month}/%{day}' % {year: 日付.year, month: 日付.month, day: 日付.day}
+      '/%{year}/%{month}/%{day}' % {year: 日付.year, month: 日付.month, day: 日付.day}
     end
   end
 end
