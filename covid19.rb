@@ -2,6 +2,7 @@
 
 require_relative 'model/contacts'
 require_relative 'model/patient'
+require_relative 'model/patients_summary'
 require_relative 'model/user'
 
 Plugin.create(:covid19) do
@@ -12,6 +13,7 @@ Plugin.create(:covid19) do
        **dss,
        covid19_contacts: '新型コロナコールセンター相談件数',
        covid19_patients: '罹患者',
+       covid19_patients_summary: '陽性患者数',
      }]
   end
 
@@ -28,6 +30,8 @@ Plugin.create(:covid19) do
         Plugin.call(:extract_receive_message, :covid19_contacts, contacts.map{|c| Plugin::Covid19::Contact.new(c) })
         patients = data.dig(:patients, :data)
         Plugin.call(:extract_receive_message, :covid19_patients, patients.map.with_index{|c, i| Plugin::Covid19::Patient.new({**c, number: i + 1}) })
+        patients_summaries = data.dig(:patients_summary, :data)
+        Plugin.call(:extract_receive_message, :covid19_patients_summary, patients_summaries.map{|c| Plugin::Covid19::PatientsSummary.new(c) })
       else
         post_apocalypse
       end
