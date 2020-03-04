@@ -32,4 +32,4 @@ mkdir -p ~/.mikutter/plugin && git clone https://github.com/toshia/covid19.git ~
 
   https://opensource.org/licenses/mit-license.php
 
-  ただし、img/ディレクトリ以下の画像は、[[https://www.irasutoya.com/][いらすとや]]様の配布している素材ですので、そちらのライセンスに従います。
+  ただし、skin/ディレクトリ以下の画像は、[[https://www.irasutoya.com/][いらすとや]]様の配布している素材ですので、そちらのライセンスに従います。
