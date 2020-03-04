@@ -1,0 +1,33 @@
+* なんこれ
+
+  mikutterで、COVID-19（新型コロナウィルス）の感染者数などの最新情報を取得するプラグインです。
+
+* インストール方法
+
+  #+BEGIN_SRC sh
+mkdir -p ~/.mikutter/plugin && git clone https://github.com/toshia/covid19.git ~/.mikutter/plugin/covid19
+  #+END_SRC
+
+* 使い方
+
+  初めて起動すると、赤い球のアイコンが表示されます。そのタブを開くと、以下の情報が時系列に混在しています。
+
+  - 新型コロナコールセンター相談件数
+  - 罹患者
+  - 陽性患者数
+
+  それぞれの情報は抽出タブデータソースとして提供されており、このタブには全て表示されています。必要な情報のみを選択して、君だけの最強の新型コロナウィルスを作ろう！
+
+* ありがとう
+
+  このプラグインが表示する情報は、 [[https://stopcovid19.metro.tokyo.lg.jp/][東京都 新型コロナウイルス対策サイト - covid19]]で提供されているものです。
+
+* ライセンス
+
+  Copyright (c) 2020 Toshiaki Asai
+
+  Released under the MIT license
+
+  https://opensource.org/licenses/mit-license.php
+
+  ただし、img/ディレクトリ以下の画像は、[[https://www.irasutoya.com/][いらすとや]]様の配布している素材ですので、そちらのライセンスに従います。
