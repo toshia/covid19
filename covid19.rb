@@ -17,6 +17,13 @@ Plugin.create(:covid19) do
      }]
   end
 
+  filter_skin_get do |fn, fallback_dirs|
+    if File.basename(fn, '.*') == 'covid19'
+      fallback_dirs << File.join(__dir__, 'skin')
+    end
+    [fn, fallback_dirs]
+  end
+
   def update(res)
     case JSON.parse(res.body, symbolize_names: true)
     in {
@@ -29,6 +36,15 @@ Plugin.create(:covid19) do
     end
   end
 
+  def create_tab(name, datasources)
+    Plugin.call(:extract_tab_create, {
+                  name: name,
+                  slug: SecureRandom.uuid,
+                  sources: datasources,
+                  icon: Skin[:covid19].uri,
+                })
+  end
+
   def polling
     Delayer.new do
       http = Net::HTTP.new(@url.host, @url.port)
@@ -38,7 +54,7 @@ Plugin.create(:covid19) do
       case res
       when Net::HTTPSuccess     # 2xx
         update(res)
-      else
+      else                      # それ以外の場合、人類が滅びたことにする
         post_apocalypse
       end
 
@@ -46,4 +62,9 @@ Plugin.create(:covid19) do
     end
   end
   polling
+
+  unless at(:infected)
+    create_tab('COVID19', [:covid19_contacts, :covid19_patients, :covid19_patients_summary])
+    store(:infected, true)
+  end
 end
