@@ -1,0 +1,10 @@
+---
+slug: :covid19
+depends:
+  mikutter: 4.0.0
+  plugin: []
+version: '1.0'
+author: toshi_a
+name: COVID-19
+description: >-
+  mikutterで、COVID-19（新型コロナウィルス）の感染者数などの最新情報を取得するプラグインです。
