@@ -15,6 +15,12 @@ Plugin.create(:covid19) do
     covid19_patients_summary: '陽性患者数',
   }.freeze
 
+  defspell(:around_message, :covid19_patient) do |patient|
+    Delayer::Deferred.new(true).tap do |promise|
+      promise.call(patient.around)
+    end
+  end
+
   filter_extract_datasources do |dss|
     [{ **dss,  **@datasources }]
   end
@@ -35,9 +41,18 @@ Plugin.create(:covid19) do
       patients_summary: {data: patients_summaries} }
       Plugin.call(:extract_receive_message, :covid19_contacts, contacts.map{|c| Plugin::Covid19::Contact.new(c) })
       Plugin.call(:extract_receive_message, :covid19_querents, contacts.map{|c| Plugin::Covid19::Querent.new(c) })
-      Plugin.call(:extract_receive_message, :covid19_patients, patients.map.with_index{|c, i| Plugin::Covid19::Patient.new({**c, number: i + 1}) })
+
+      Plugin.call(:extract_receive_message, :covid19_patients, gen_patients(patients))
       Plugin.call(:extract_receive_message, :covid19_patients_summary, patients_summaries.map{|c| Plugin::Covid19::PatientsSummary.new(c) })
     end
+  end
+
+  def gen_patients(source)
+    patients = source.map.with_index{|c, i| Plugin::Covid19::Patient.new({**c, number: i + 1}) }.to_a
+    patients.each do |patient|
+      patient.receive_user_idnames.each { |number| notice number;patient.add_parent(patients[number - 1]) }
+    end
+    patients
   end
 
   def create_tab(name, datasources)
