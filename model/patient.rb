@@ -44,8 +44,19 @@ module Plugin::Covid19
       リリース日
     end
 
+    def cure?
+      退院 == '〇'
+    end
+
+    def die?
+      備考&.include?('死亡')
+    end
+
     def cure_sign
-      if 退院 == '〇'
+      case
+      when die?
+        '【死亡】'
+      when cure?
         '【退院済み】'
       end
     end
