@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
 require_relative 'model/contacts'
+require_relative 'model/querents'
 require_relative 'model/patient'
 require_relative 'model/patients_summary'
 require_relative 'model/user'
 
 Plugin.create(:covid19) do
   @url = Diva::URI('https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/staging/data/data.json')
+  @datasources = {
+    covid19_contacts:         '新型コロナコールセンター相談件数',
+    covid19_querents:         '帰国者・接触者センター相談件数',
+    covid19_patients:         '罹患者',
+    covid19_patients_summary: '陽性患者数',
+  }.freeze
 
   filter_extract_datasources do |dss|
-    [{
-       **dss,
-       covid19_contacts:         '新型コロナコールセンター相談件数',
-       covid19_patients:         '罹患者',
-       covid19_patients_summary: '陽性患者数',
-     }]
+    [{ **dss,  **@datasources }]
   end
 
   filter_skin_get do |fn, fallback_dirs|
@@ -28,9 +30,11 @@ Plugin.create(:covid19) do
     case JSON.parse(res.body, symbolize_names: true)
     in {
       contacts:         {data: contacts},
+      querents:         {data: querents},
       patients:         {data: patients},
       patients_summary: {data: patients_summaries} }
       Plugin.call(:extract_receive_message, :covid19_contacts, contacts.map{|c| Plugin::Covid19::Contact.new(c) })
+      Plugin.call(:extract_receive_message, :covid19_querents, contacts.map{|c| Plugin::Covid19::Querent.new(c) })
       Plugin.call(:extract_receive_message, :covid19_patients, patients.map.with_index{|c, i| Plugin::Covid19::Patient.new({**c, number: i + 1}) })
       Plugin.call(:extract_receive_message, :covid19_patients_summary, patients_summaries.map{|c| Plugin::Covid19::PatientsSummary.new(c) })
     end
@@ -64,7 +68,7 @@ Plugin.create(:covid19) do
   polling
 
   unless at(:infected)
-    create_tab('COVID19', [:covid19_contacts, :covid19_patients, :covid19_patients_summary])
+    create_tab('COVID19', @datasources.keys)
     store(:infected, true)
   end
 end
