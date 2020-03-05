@@ -59,7 +59,7 @@ Plugin.create(:covid19) do
       when Net::HTTPSuccess     # 2xx
         update(res)
       else                      # それ以外の場合、人類が滅びたことにする
-        post_apocalypse
+        Plugin.call(:apocalypse)
       end
 
       Reserver.new(3600, &method(:polling))
