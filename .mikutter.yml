@@ -3,7 +3,7 @@ slug: :covid19
 depends:
   mikutter: 4.0.0
   plugin: []
-version: '1.0'
+version: '1.1'
 author: toshi_a
 name: COVID-19
 description: >-
