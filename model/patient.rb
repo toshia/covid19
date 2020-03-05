@@ -36,7 +36,7 @@ module Plugin::Covid19
     end
 
     def cure_sign
-      if 退院 == '○'
+      if 退院 == '〇'
         '【退院済み】'
       end
     end
